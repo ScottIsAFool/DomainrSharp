@@ -8,6 +8,8 @@
 namespace DomainrSharp.Silverlight
 #elif WINDOWS_PHONE
 namespace DomainrSharp.WindowsPhone
+#elif WINRT
+namespace DomainrSharp.WinRT
 #else
 namespace DomainrSharp
 #endif

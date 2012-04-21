@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Net;
+#if WINRT
+using System.Net.Http;
+#endif
 using Newtonsoft.Json;
 
 #if (SILVERLIGHT && !WINDOWS_PHONE)
 namespace DomainrSharp.Silverlight
 #elif WINDOWS_PHONE
 namespace DomainrSharp.WindowsPhone
+#elif WINRT
+namespace DomainrSharp.WinRT
 #else
 namespace DomainrSharp
 #endif
@@ -26,7 +31,7 @@ namespace DomainrSharp
 
         }
 
-#if !SILVERLIGHT
+#if (!SILVERLIGHT && !WINRT)
         /// <summary>
         /// Searches the specified search term.
         /// </summary>
@@ -60,42 +65,32 @@ namespace DomainrSharp
             if (string.IsNullOrEmpty(searchTerm))
                 throw new NullReferenceException("Search term cannot be empty");
 
-#if !SILVERLIGHT
+#if WINRT
+            string url = string.Format(QueryUrl, searchTerm);
+
+            HttpClient client = new HttpClient();
+            client.GetAsync(url).ContinueWith((requestTask) =>
+            {
+                HttpResponseMessage response = requestTask.Result;
+                response.EnsureSuccessStatusCode();
+
+                response.Content.ReadAsStringAsync().ContinueWith(readTask =>
+                {
+                    ParseSearchResultString(readTask.Result);
+                });
+            });
+#else
+#if (!SILVERLIGHT && !WINRT)
             ZippedClient client = new ZippedClient();
 #else
             WebClient client = new SharpGIS.GZipWebClient();
 #endif
+            
             client.DownloadStringCompleted += (s, e) =>
             {
                 if (e.Error == null)
                 {
-                    if (e.Result != null)
-                    {
-                        try
-                        {
-                            var result = JsonConvert.DeserializeObject<SearchResult>(e.Result);
-                            if (result != null)
-                            {
-                                if (SearchCompleted != null)
-                                    SearchCompleted(this, new SearchResultsEventsArgs(result));
-                            }
-                            else
-                            {
-                                if (SearchCompleted != null)
-                                    SearchCompleted(this, new SearchResultsEventsArgs(new SearchResult()) { Result = null });
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            if (SearchCompleted != null)
-                                SearchCompleted(this, new SearchResultsEventsArgs(ex));
-                        }
-                    }
-                    else
-                    {
-                        if (SearchCompleted != null)
-                            SearchCompleted(this, new SearchResultsEventsArgs(new SearchResult()) { Result = null });
-                    }
+                    ParseSearchResultString(e.Result);
                 }
                 else
                 {
@@ -105,6 +100,69 @@ namespace DomainrSharp
             };
             string url = string.Format(QueryUrl, searchTerm);
             client.DownloadStringAsync(new Uri(url, UriKind.Absolute));
+#endif
+        }
+
+        private void ParseSearchResultString(string json)
+        {
+            if (json != null)
+            {
+                try
+                {
+                    var result = JsonConvert.DeserializeObject<SearchResult>(json);
+                    if (result != null)
+                    {
+                        if (SearchCompleted != null)
+                            SearchCompleted(this, new SearchResultsEventsArgs(result));
+                    }
+                    else
+                    {
+                        if (SearchCompleted != null)
+                            SearchCompleted(this, new SearchResultsEventsArgs(new SearchResult()) { Result = null });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (SearchCompleted != null)
+                        SearchCompleted(this, new SearchResultsEventsArgs(ex));
+                }
+            }
+            else
+            {
+                if (SearchCompleted != null)
+                    SearchCompleted(this, new SearchResultsEventsArgs(new SearchResult()) { Result = null });
+            }
+        }
+
+        private void ParseInfoDownloadString(string json)
+        {
+            if (json != null)
+            {
+                try
+                {
+                    var domainrInfo = JsonConvert.DeserializeObject<DomainrInfo>(json);
+                    if (domainrInfo != null)
+                    {
+                        if (InfoDownloadCompleted != null)
+                            InfoDownloadCompleted(this, new DomainrInfoEventArgs(domainrInfo));
+                    }
+                    else
+                    {
+                        if (InfoDownloadCompleted != null)
+                            InfoDownloadCompleted(this, new DomainrInfoEventArgs(new DomainrInfo()) { Result = null });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (InfoDownloadCompleted != null)
+                        InfoDownloadCompleted(this, new DomainrInfoEventArgs(ex));
+                }
+            }
+            else
+            {
+                if (InfoDownloadCompleted != null)
+                    InfoDownloadCompleted(this, new DomainrInfoEventArgs(new DomainrInfo()) { Result = null });
+            }
         }
 
         public void InfoDownloadAsync(string domain)
@@ -112,42 +170,31 @@ namespace DomainrSharp
             if (string.IsNullOrEmpty(domain))
                 throw new NullReferenceException("Domain cannot be empty");
 
-#if SILVERLIGHT
-            WebClient client = new SharpGIS.GZipWebClient();
+#if WINRT
+            string url = string.Format(InfoUrl, domain);
+
+            HttpClient client = new HttpClient();
+            client.GetAsync(url).ContinueWith((requestTask) =>
+            {
+                HttpResponseMessage response = requestTask.Result;
+                response.EnsureSuccessStatusCode();
+
+                response.Content.ReadAsStringAsync().ContinueWith(readTask =>
+                {
+                    ParseInfoDownloadString(readTask.Result);
+                });
+            });
 #else
+#if (!SILVERLIGHT && !WINRT)
             ZippedClient client = new ZippedClient();
+#else
+            WebClient client = new SharpGIS.GZipWebClient();
 #endif
             client.DownloadStringCompleted += (s, e) =>
             {
                 if (e.Error == null)
                 {
-                    if (e.Result != null)
-                    {
-                        try
-                        {
-                            var domainrInfo = JsonConvert.DeserializeObject<DomainrInfo>(e.Result);
-                            if (domainrInfo != null)
-                            {
-                                if (InfoDownloadCompleted != null)
-                                    InfoDownloadCompleted(this, new DomainrInfoEventArgs(domainrInfo));
-                            }
-                            else
-                            {
-                                if (InfoDownloadCompleted != null)
-                                    InfoDownloadCompleted(this, new DomainrInfoEventArgs(new DomainrInfo()) { Result = null });
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            if (InfoDownloadCompleted != null)
-                                InfoDownloadCompleted(this, new DomainrInfoEventArgs(ex));
-                        }
-                    }
-                    else
-                    {
-                        if (InfoDownloadCompleted != null)
-                            InfoDownloadCompleted(this, new DomainrInfoEventArgs(new DomainrInfo()) { Result = null });
-                    }
+                    ParseInfoDownloadString(e.Result);
                 }
                 else
                 {
@@ -157,15 +204,17 @@ namespace DomainrSharp
             };
             string url = string.Format(InfoUrl, domain);
             client.DownloadStringAsync(new Uri(url, UriKind.Absolute));
+#endif
         }
 
-#if !SILVERLIGHT
+#if (!SILVERLIGHT && !WINRT)
         public DomainrInfo InfoDownload(string domain)
         {
             if (string.IsNullOrEmpty(domain))
                 throw new NullReferenceException("Domain cannot be empty");
 
             DomainrInfo result = null;
+
             ZippedClient client = new ZippedClient();
             string url = string.Format(InfoUrl, domain);
 
@@ -181,7 +230,7 @@ namespace DomainrSharp
 #endif
     }
 
-#if !SILVERLIGHT
+#if (!SILVERLIGHT && !WINRT)
     internal class ZippedClient : WebClient
     {
         protected override WebRequest GetWebRequest(Uri address)
