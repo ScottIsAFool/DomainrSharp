@@ -165,6 +165,10 @@ namespace DomainrSharp
             }
         }
 
+        /// <summary>
+        /// Downloads the extra domainr information
+        /// </summary>
+        /// <param name="domain">The domain.</param>
         public void InfoDownloadAsync(string domain)
         {
             if (string.IsNullOrEmpty(domain))
@@ -208,6 +212,10 @@ namespace DomainrSharp
         }
 
 #if (!SILVERLIGHT && !WINRT)
+        /// <summary>
+        /// Downloads the extra domainr information
+        /// </summary>
+        /// <param name="domain">The domain.</param>
         public DomainrInfo InfoDownload(string domain)
         {
             if (string.IsNullOrEmpty(domain))
