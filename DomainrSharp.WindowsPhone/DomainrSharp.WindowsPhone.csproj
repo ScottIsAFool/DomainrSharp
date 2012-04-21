@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1704FE97-03A8-42B5-87B0-35060EBF2395}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DomainrSharp.WindowsPhone</RootNamespace>
+    <AssemblyName>DomainrSharp.WindowsPhone</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.3\lib\sl4-windowsphone71\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="mscorlib.extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\DomainrSharp\DomainrInfo.cs">
+      <Link>DomainrInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\DomainrInfoEventArgs.cs">
+      <Link>DomainrInfoEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\DomainrSharpService.cs">
+      <Link>DomainrSharpService.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\Registrar.cs">
+      <Link>Registrar.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\Result.cs">
+      <Link>Result.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\SearchResult.cs">
+      <Link>SearchResult.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\SearchResultsEventsArgs.cs">
+      <Link>SearchResultsEventsArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\DomainrSharp\Tld.cs">
+      <Link>Tld.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\GZipHttpWebRequest.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\GZipWebClient.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\WebRequestCreator.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\Crc32.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\FlushType.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\GZipStream.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\Inflate.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\InfTree.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\ZLib.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\ZLibCodec.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\ZLibConstants.cs" />
+    <Compile Include="SharpGIS.GZipWebClient\ZLib\ZLibStream.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
