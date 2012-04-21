@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net;
-#if WINRT
+#if (WINRT || NET45)
 using System.Net.Http;
 #endif
 using Newtonsoft.Json;
@@ -65,7 +65,7 @@ namespace DomainrSharp
             if (string.IsNullOrEmpty(searchTerm))
                 throw new NullReferenceException("Search term cannot be empty");
 
-#if WINRT
+#if (WINRT || NET45)
             string url = string.Format(QueryUrl, searchTerm);
 
             HttpClient client = new HttpClient();
@@ -170,7 +170,7 @@ namespace DomainrSharp
             if (string.IsNullOrEmpty(domain))
                 throw new NullReferenceException("Domain cannot be empty");
 
-#if WINRT
+#if (WINRT || NET45)
             string url = string.Format(InfoUrl, domain);
 
             HttpClient client = new HttpClient();
