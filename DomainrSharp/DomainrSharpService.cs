@@ -26,9 +26,13 @@ namespace DomainrSharp
         public event SearchResultHandler SearchCompleted;
         public event DomainrInfoHandler InfoDownloadCompleted;
 
-        public DomainrSharpService()
-        {
+        public string ClientID { get; set; }
 
+        public DomainrSharpService() { }
+
+        public DomainrSharpService(string clientId)
+        {
+            ClientID = clientId;
         }
 
 #if (!SILVERLIGHT && !WINRT)
@@ -45,6 +49,8 @@ namespace DomainrSharp
             SearchResult result = null;
             ZippedClient client = new ZippedClient();
             string url = string.Format(QueryUrl, searchTerm);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
 
             string json = client.DownloadString(url);
             if (!string.IsNullOrEmpty(json))
@@ -67,6 +73,8 @@ namespace DomainrSharp
 
 #if (WINRT || NET45)
             string url = string.Format(QueryUrl, searchTerm);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
 
             HttpClient client = new HttpClient();
             client.GetAsync(url).ContinueWith((requestTask) =>
@@ -99,6 +107,8 @@ namespace DomainrSharp
                 }
             };
             string url = string.Format(QueryUrl, searchTerm);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
             client.DownloadStringAsync(new Uri(url, UriKind.Absolute));
 #endif
         }
@@ -176,6 +186,8 @@ namespace DomainrSharp
 
 #if (WINRT || NET45)
             string url = string.Format(InfoUrl, domain);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
 
             HttpClient client = new HttpClient();
             client.GetAsync(url).ContinueWith((requestTask) =>
@@ -207,6 +219,8 @@ namespace DomainrSharp
                 }
             };
             string url = string.Format(InfoUrl, domain);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
             client.DownloadStringAsync(new Uri(url, UriKind.Absolute));
 #endif
         }
@@ -225,6 +239,8 @@ namespace DomainrSharp
 
             ZippedClient client = new ZippedClient();
             string url = string.Format(InfoUrl, domain);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
 
             string json = client.DownloadString(url);
 
