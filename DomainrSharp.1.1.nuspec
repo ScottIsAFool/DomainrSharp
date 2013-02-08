@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>DomainrSharp</id>
+        <version>1.1</version>
+        <title>DomainrSharp</title>
+        <authors>ScottIsAFool</authors>
+        <owners>Scott Lovegrove</owners>
+        <projectUrl>https://github.com/ScottIsAFool/DomainrSharp</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A .NET wrapper for the domai.nr API that lets you search for fun and different domain names based on a search word</description>
+        <summary>A .NET wrapper for the domai.nr API</summary>
+        <releaseNotes>1.1 includes new method calls for .NET 4.5 and WinRT versions to allow async/await pattern.</releaseNotes>
+        <copyright>2012 ScottIsAFool</copyright>
+        <language>en-GB</language>
+        <tags>domainr domain tld</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="4.5.3" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="DomainrSharp.Net35\bin\Release\DomainrSharp.Net35.dll" target="lib\net35\DomainrSharp.Net35.dll" />
+        <file src="DomainrSharp\bin\Release\DomainrSharp.Net40.dll" target="lib\net40\DomainrSharp.Net40.dll" />
+        <file src="DomainrSharp.Net45\bin\Release\DomainrSharp.Net45.dll" target="lib\net45\DomainrSharp.Net45.dll" />
+        <file src="DomainrSharp.WindowsPhone\bin\Release\DomainrSharp.WindowsPhone.dll" target="lib\sl4-wp71\DomainrSharp.WindowsPhone.dll" />
+        <file src="DomainrSharp.Silverlight\bin\Release\DomainrSharp.Silverlight.dll" target="lib\sl40\DomainrSharp.Silverlight.dll" />
+        <file src="DomainrSharp.WinRt\bin\Release\DomainrSharp.WinRT.dll" target="lib\winrt45\DomainrSharp.WinRT.dll" />
+    </files>
+</package>

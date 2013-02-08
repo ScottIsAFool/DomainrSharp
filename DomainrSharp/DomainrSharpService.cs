@@ -2,6 +2,7 @@
 using System.Net;
 #if (WINRT || NET45)
 using System.Net.Http;
+using System.Threading.Tasks;
 #endif
 using Newtonsoft.Json;
 
@@ -20,11 +21,13 @@ namespace DomainrSharp
         private static string QueryUrl = "http://domai.nr/api/json/search?q={0}";
         private static string InfoUrl = "http://domai.nr/api/json/info?q={0}";
 
+#if !WINRT
         public delegate void SearchResultHandler(object sender, SearchResultsEventsArgs e);
         public delegate void DomainrInfoHandler(object sender, DomainrInfoEventArgs e);
 
         public event SearchResultHandler SearchCompleted;
         public event DomainrInfoHandler InfoDownloadCompleted;
+#endif
 
         public string ClientID { get; set; }
 
@@ -62,6 +65,7 @@ namespace DomainrSharp
         }
 #endif
 
+#if !WINRT
         /// <summary>
         /// Does the search asynchronously
         /// </summary>
@@ -71,7 +75,7 @@ namespace DomainrSharp
             if (string.IsNullOrEmpty(searchTerm))
                 throw new NullReferenceException("Search term cannot be empty");
 
-#if (WINRT || NET45)
+#if (NET45)
             string url = string.Format(QueryUrl, searchTerm);
             if (!string.IsNullOrEmpty(ClientID))
                 url += "&client_id=" + ClientID;
@@ -82,10 +86,7 @@ namespace DomainrSharp
                 HttpResponseMessage response = requestTask.Result;
                 response.EnsureSuccessStatusCode();
 
-                response.Content.ReadAsStringAsync().ContinueWith(readTask =>
-                {
-                    ParseSearchResultString(readTask.Result);
-                });
+                response.Content.ReadAsStringAsync().ContinueWith(readTask => ParseSearchResultString(readTask.Result));
             });
 #else
 #if (!SILVERLIGHT && !WINRT)
@@ -112,7 +113,66 @@ namespace DomainrSharp
             client.DownloadStringAsync(new Uri(url, UriKind.Absolute));
 #endif
         }
+#endif
 
+#if (WINRT || NET45)
+#if (WINRT)
+        public async Task<SearchResult> SearchAsync(string searchTerm)
+#elif NET45
+        public async Task<SearchResult> SearchTaskAsync(string searchTerm)
+#endif
+        {
+            var handler = new HttpClientHandler {AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate};
+            var httpClient = new HttpClient(handler);
+
+            var url = string.Format(QueryUrl, searchTerm);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
+
+            var resultString = await httpClient.GetStringAsync(url);
+
+            try
+            {
+                return JsonConvert.DeserializeObject<SearchResult>(resultString);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Downloads the information asynchronously
+        /// </summary>
+        /// <param name="domain">The domain.</param>
+        /// <returns></returns>
+#if WINRT
+        public async Task<DomainrInfo> InfoDownloadAsync(string domain)
+#elif NET45
+        public async Task<DomainrInfo> InfoDownloadTaskAsync(string domain)
+#endif
+        {
+            var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
+            var httpClient = new HttpClient(handler);
+
+            var url = string.Format(InfoUrl, domain);
+            if (!string.IsNullOrEmpty(ClientID))
+                url += "&client_id=" + ClientID;
+
+            var resultString = await httpClient.GetStringAsync(url);
+
+            try
+            {
+                return JsonConvert.DeserializeObject<DomainrInfo>(resultString);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+#endif
+
+#if !WINRT
         private void ParseSearchResultString(string json)
         {
             if (json != null)
@@ -174,7 +234,9 @@ namespace DomainrSharp
                     InfoDownloadCompleted(this, new DomainrInfoEventArgs(new DomainrInfo()) { Result = null });
             }
         }
+#endif
 
+#if !WINRT
         /// <summary>
         /// Downloads the extra domainr information
         /// </summary>
@@ -184,7 +246,7 @@ namespace DomainrSharp
             if (string.IsNullOrEmpty(domain))
                 throw new NullReferenceException("Domain cannot be empty");
 
-#if (WINRT || NET45)
+#if (NET45)
             string url = string.Format(InfoUrl, domain);
             if (!string.IsNullOrEmpty(ClientID))
                 url += "&client_id=" + ClientID;
@@ -201,7 +263,7 @@ namespace DomainrSharp
                 });
             });
 #else
-#if (!SILVERLIGHT && !WINRT)
+#if (!SILVERLIGHT)
             ZippedClient client = new ZippedClient();
 #else
             WebClient client = new SharpGIS.GZipWebClient();
@@ -224,6 +286,7 @@ namespace DomainrSharp
             client.DownloadStringAsync(new Uri(url, UriKind.Absolute));
 #endif
         }
+#endif
 
 #if (!SILVERLIGHT && !WINRT)
         /// <summary>
