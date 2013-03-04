@@ -8,6 +8,8 @@ namespace DomainrSharp
 {
     public class DomainrSharpService : IDomainrSharpService
     {
+        private HttpClient HttpClient { get; set; }
+
         private const string QueryUrl = "http://domai.nr/api/json/search?q={0}";
         private const string InfoUrl = "http://domai.nr/api/json/info?q={0}";
 
@@ -18,6 +20,7 @@ namespace DomainrSharp
         /// </summary>
         public DomainrSharpService()
         {
+            HttpClient = new HttpClient(new CompressedHttpClientHandler());
         }
 
         /// <summary>
@@ -27,6 +30,7 @@ namespace DomainrSharp
         public DomainrSharpService(string clientId)
         {
             ClientID = clientId;
+            HttpClient = new HttpClient(new CompressedHttpClientHandler());
         }
 
         /// <summary>
@@ -36,13 +40,12 @@ namespace DomainrSharp
         /// <returns></returns>
         public async Task<SearchResult> SearchAsync(string searchTerm)
         {
-            var httpClient = new HttpClient(new CompressedHttpClientHandler());
 
             var url = string.Format(QueryUrl, searchTerm);
             if (!string.IsNullOrEmpty(ClientID))
                 url += "&client_id=" + ClientID;
 
-            var resultString = await httpClient.GetStringAsync(url);
+            var resultString = await HttpClient.GetStringAsync(url);
 
             try
             {
@@ -61,14 +64,11 @@ namespace DomainrSharp
         /// <returns></returns>
         public async Task<DomainrInfo> InfoDownloadAsync(string domain)
         {
-            var handler = new HttpClientHandler {AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate};
-            var httpClient = new HttpClient(handler);
-
             var url = string.Format(InfoUrl, domain);
             if (!string.IsNullOrEmpty(ClientID))
                 url += "&client_id=" + ClientID;
 
-            var resultString = await httpClient.GetStringAsync(url);
+            var resultString = await HttpClient.GetStringAsync(url);
 
             try
             {
