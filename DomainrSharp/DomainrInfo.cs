@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using PropertyChanged;
 
 #if (SILVERLIGHT && !WINDOWS_PHONE)
 namespace DomainrSharp.Silverlight
@@ -11,7 +12,7 @@ namespace DomainrSharp.WinRT
 namespace DomainrSharp
 #endif
 {
-    [DataContract]
+    [DataContract, ImplementPropertyChanged]
     public class DomainrInfo
     {
         [DataMember(Name = "query")]
@@ -35,7 +36,7 @@ namespace DomainrSharp
         [DataMember(Name = "subregistration_permitted")]
         public bool SubregistrationPermitted { get; set; }
         [DataMember(Name = "www_url")]
-        public string WWWUrl { get; set; }
+        public string WwwUrl { get; set; }
         [DataMember(Name = "whois_url")]
         public string WhoisUrl { get; set; }
         [DataMember(Name = "register_url")]

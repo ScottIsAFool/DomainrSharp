@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AdvancedREI.Net.Http.Compression;
 using Newtonsoft.Json;
 
 namespace DomainrSharp
@@ -13,14 +12,14 @@ namespace DomainrSharp
         private const string QueryUrl = "http://domai.nr/api/json/search?q={0}";
         private const string InfoUrl = "http://domai.nr/api/json/info?q={0}";
 
-        public string ClientID { get; set; }
+        public string ClientId { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DomainrSharpService" /> class.
         /// </summary>
         public DomainrSharpService()
+            : this(string.Empty)
         {
-            HttpClient = new HttpClient(new CompressedHttpClientHandler());
         }
 
         /// <summary>
@@ -29,8 +28,8 @@ namespace DomainrSharp
         /// <param name="clientId">The client id.</param>
         public DomainrSharpService(string clientId)
         {
-            ClientID = clientId;
-            HttpClient = new HttpClient(new CompressedHttpClientHandler());
+            ClientId = clientId;
+            HttpClient = new HttpClient(new HttpClientHandler{AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip});
         }
 
         /// <summary>
@@ -42,8 +41,8 @@ namespace DomainrSharp
         {
 
             var url = string.Format(QueryUrl, searchTerm);
-            if (!string.IsNullOrEmpty(ClientID))
-                url += "&client_id=" + ClientID;
+            if (!string.IsNullOrEmpty(ClientId))
+                url += "&client_id=" + ClientId;
 
             var resultString = await HttpClient.GetStringAsync(url);
 
@@ -65,8 +64,8 @@ namespace DomainrSharp
         public async Task<DomainrInfo> InfoDownloadAsync(string domain)
         {
             var url = string.Format(InfoUrl, domain);
-            if (!string.IsNullOrEmpty(ClientID))
-                url += "&client_id=" + ClientID;
+            if (!string.IsNullOrEmpty(ClientId))
+                url += "&client_id=" + ClientId;
 
             var resultString = await HttpClient.GetStringAsync(url);
 

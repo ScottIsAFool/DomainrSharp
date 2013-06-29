@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using PropertyChanged;
 
 #if (SILVERLIGHT && !WINDOWS_PHONE)
 namespace DomainrSharp.Silverlight
@@ -11,7 +12,7 @@ namespace DomainrSharp.WinRT
 namespace DomainrSharp
 #endif
 {
-    [DataContract]
+    [DataContract, ImplementPropertyChanged]
     public class SearchResult
     {
         [DataMember(Name = "query")]

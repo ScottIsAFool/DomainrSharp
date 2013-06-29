@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using PropertyChanged;
 
 #if (SILVERLIGHT && !WINDOWS_PHONE)
 namespace DomainrSharp.Silverlight
@@ -10,7 +11,7 @@ namespace DomainrSharp.WinRT
 namespace DomainrSharp
 #endif
 {
-    [DataContract]
+    [DataContract, ImplementPropertyChanged]
     public class Registrar
     {
         [DataMember(Name = "registrar")]
